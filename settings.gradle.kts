@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Ticket Master DotO"
 include(":app")
- 
+include(":data")
+include(":domain")
+include(":presentation")
