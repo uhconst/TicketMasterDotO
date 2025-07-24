@@ -69,11 +69,13 @@ dependencies {
     implementation(libs.koin.android)
 
     implementation(libs.room.runtime) //todo shouldn't need in APP
-    ksp(libs.room.compiler) //todo shouldn't need in APP
+    ksp(libs.room.compiler)
+    api(project(":feature-events")) //todo shouldn't need in APP
 
-    api(project(":presentation"))
-    api(project(":data")) //todo
-    api(project(":domain")) //todo
+    api(project(":repo-favourites"))
+    api(project(":domain-events")) //todo
+    api(project(":domain-favourites")) //todo
+    implementation(project(":lib-build-config"))
 
     testImplementation(libs.junit)
 
