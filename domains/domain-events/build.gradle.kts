@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.uhc.events.events"
+    namespace = "com.uhc.domain.events"
     compileSdk = 36
 
     defaultConfig {

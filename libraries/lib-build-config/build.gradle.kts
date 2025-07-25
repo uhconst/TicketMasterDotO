@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.uhc.libraries.lib.build.config"
+    namespace = "com.uhc.lib.build.config"
     compileSdk = 36
 
     defaultConfig {

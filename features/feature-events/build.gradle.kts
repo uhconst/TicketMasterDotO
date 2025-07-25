@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.uhc.presentation"
+    namespace = "com.uhc.feature.events"
     compileSdk = 36
 
     defaultConfig {

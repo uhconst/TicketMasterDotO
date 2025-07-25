@@ -32,10 +32,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EventsScreen() {
-    // Placeholder for the actual implementation
-    /*    Box(modifier = Modifier.fillMaxSize()) {
-            Text("Events Layout")
-        }*/
     val viewModel: EventListViewModel = koinViewModel()
 
     val events by viewModel.events.collectAsState()
