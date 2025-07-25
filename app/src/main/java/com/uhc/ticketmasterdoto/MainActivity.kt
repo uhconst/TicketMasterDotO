@@ -12,10 +12,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
+import com.uhc.lib.compose.utils.R
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
-import com.uhc.ticketmasterdoto.navigation.NavigationStack
-import com.uhc.ticketmasterdoto.navigation.Routes
+import com.uhc.ticketmasterdoto.navigation.TicketMasterNavHost
+import com.uhc.ticketmasterdoto.navigation.NavRoute
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,14 +31,14 @@ class MainActivity : ComponentActivity() {
                         NavigationBar {
                             NavigationBarItem(
                                 selected = false,
-                                onClick = { navController.navigate(Routes.Main) },
-                                label = { Text("Home") },
+                                onClick = { navController.navigate(NavRoute.Home.value) },
+                                label = { Text(stringResource(R.string.home_bottom_nav)) },
                                 icon = { Icon(Icons.Default.Home, contentDescription = null) }
                             )
                         }
                     }
                 ) { innerPadding ->
-                    NavigationStack(Modifier.padding(innerPadding))
+                    TicketMasterNavHost(Modifier.padding(innerPadding), navController)
                 }
             }
         }
