@@ -39,7 +39,7 @@ import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun EventsScreen() {
+fun EventsLayout() {
     val viewModel: EventListViewModel = koinViewModel()
 
     val events by viewModel.events.collectAsState()
@@ -49,7 +49,7 @@ fun EventsScreen() {
         viewModel.fetchEvents()
     }
 
-    EventsLayout(
+    EventsList(
         events = events,
         isLoading = isLoading,
         onRefresh = { viewModel.fetchEvents() },
@@ -60,7 +60,7 @@ fun EventsScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventsLayout(
+private fun EventsList(
     events: List<Event>,
     isLoading: Boolean,
     onRefresh: () -> Unit,
@@ -161,7 +161,7 @@ private fun EventItemCard(
 
 @TicketMasterPreview
 @Composable
-fun EventItemPreview() {
+private fun EventItemPreview() {
     TicketMasterTheme {
         EventItemCard(
             event = Event(
@@ -179,9 +179,9 @@ fun EventItemPreview() {
 
 @TicketMasterPreview
 @Composable
-fun EventsLayoutPreview() {
+private fun EventsLayoutPreview() {
     TicketMasterTheme {
-        EventsLayout(
+        EventsList(
             events = listOf(
                 Event(
                     id = "1",

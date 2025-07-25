@@ -1,3 +1,11 @@
 <resources>
     <string name="home_bottom_nav">Home</string>
+    <string name="about_bottom_nav">About</string>
+    <string name="name">Uryel Constancio</string>
+    <string name="role">Senior Android Developer</string>
+    <string name="bio">A forward-thinking developer offering thirteen years of experience building, integrating, testing and supporting Android applications for mobile and tablet devices on the Android platform. I have a solid understanding of the full mobile development life cycle with a wide variety of Android device resolutions and SDK versions. Always following best practices and clean code standards with the latest technology.</string>
+    <string name="about_this_app">About this app</string>
+    <string name="app_description">This app follows clean architecture with data, domain, and feature (UI) modules. It uses Room database, Retrofit, and is built fully in Kotlin and Jetpack Compose.</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="github">GitHub</string>
 </resources>

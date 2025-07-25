@@ -18,7 +18,9 @@ private val DarkColorScheme = darkColorScheme(
     surfaceContainerHighest = color_indigo32_100a,
     primaryContainer = color_blue907_100a,
     onPrimaryContainer = color_blue10_100a,
-    surfaceContainer = color_blue10_100a
+    surfaceContainer = color_blue10_100a,
+    secondaryContainer = color_blue907_100a,
+    onSecondaryContainer = color_blue10_100a
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -33,7 +35,9 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainerHighest = color_indigo900_100a,
     primaryContainer = color_blue10_100a,
     onPrimaryContainer = color_blue907_100a,
-    surfaceContainer = color_blue907_100a
+    surfaceContainer = color_blue907_100a,
+    secondaryContainer = color_blue10_100a,
+    onSecondaryContainer = color_blue907_100a
 )
 
 @Composable

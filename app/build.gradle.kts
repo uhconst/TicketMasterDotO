@@ -56,6 +56,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature-about"))
     implementation(project(":feature-events"))
     implementation(project(":lib-build-config"))
     implementation(project(":lib-compose-utils"))

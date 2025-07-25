@@ -5,7 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.uhc.feature.events.EventsScreen
+import com.uhc.feature.about.AboutLayout
+import com.uhc.feature.events.EventsLayout
 
 @Composable
 fun TicketMasterNavHost(
@@ -18,7 +19,10 @@ fun TicketMasterNavHost(
         startDestination = NavRoute.Home.value
     ) {
         composable(route = NavRoute.Home.value) {
-            EventsScreen()
+            EventsLayout()
+        }
+        composable(route = NavRoute.About.value) {
+            AboutLayout()
         }
     }
 }

@@ -32,6 +32,7 @@ include(
     ":domain-favourites",
 
     // Feature modules
+    ":feature-about",
     ":feature-events",
 
     // Library modules
@@ -49,6 +50,7 @@ project(":domain-events").projectDir = file("domains/domain-events")
 project(":domain-favourites").projectDir = file("domains/domain-favourites")
 
 // Feature modules
+project(":feature-about").projectDir = file("features/feature-about")
 project(":feature-events").projectDir = file("features/feature-events")
 
 // Library modules
