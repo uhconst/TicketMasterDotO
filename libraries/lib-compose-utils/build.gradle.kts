@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.uhc.repo.favourites"
+    namespace = "com.uhc.lib.compose.utils"
     compileSdk = 36
 
     defaultConfig {
@@ -33,8 +32,17 @@ android {
 }
 
 dependencies {
-    implementation(libs.room.runtime)
-    implementation(libs.koin.android)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.compose.ui.tooling.preview)
 
-    ksp(libs.room.compiler)
+    testImplementation(libs.junit)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

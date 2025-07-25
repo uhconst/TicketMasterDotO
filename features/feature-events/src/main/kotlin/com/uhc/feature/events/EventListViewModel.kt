@@ -38,6 +38,7 @@ class EventListViewModel(
     fun fetchEvents() {
         _isLoading.value = true
         viewModelScope.launch {
+            // todo remove try catches
             try {
                 val events = getEventsUseCase.getEvents(size)
                 _events.value = events.sortedByDescending { it.favourite }

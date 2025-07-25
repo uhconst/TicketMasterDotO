@@ -3,6 +3,7 @@ package com.uhc.api.events
 import com.uhc.api.events.data.EventsResponse
 import com.uhc.api.events.interceptor.RemoteRequestInterceptor
 import com.uhc.lib.config.BuildConfigWrapper
+import com.uhc.lib.network.utils.interceptors.ApiErrorInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -36,11 +37,11 @@ interface EventApi {
         fun createEventService(
             buildConfigWrapper: BuildConfigWrapper,
             requestInterceptor: RemoteRequestInterceptor,
-//            remoteErrorInterceptor: RemoteErrorInterceptor
+            apiErrorInterceptor: ApiErrorInterceptor
         ): EventApi {
             val client = OkHttpClient().newBuilder()
                 .addInterceptor(requestInterceptor)
-//                .addInterceptor(remoteErrorInterceptor)
+                .addInterceptor(apiErrorInterceptor)
                 .addInterceptor(getHttpLoggingInterceptor())
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)

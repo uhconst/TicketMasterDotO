@@ -34,14 +34,12 @@ android {
 
 dependencies {
     implementation(project(":lib-build-config"))
+    implementation(project(":lib-network-utils"))
 
-    implementation(libs.room.runtime)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
     implementation(libs.koin.android)
-
-    ksp(libs.room.compiler)
 }

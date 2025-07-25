@@ -4,7 +4,6 @@ import com.uhc.lib.config.BuildConfigWrapper
 import okhttp3.Interceptor
 import okhttp3.Response
 
-// todo move to library module?
 class RemoteRequestInterceptor(
     private val buildConfigWrapper: BuildConfigWrapper
 ) : Interceptor {

@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.uhc.repo.favourites"
+    namespace = "com.uhc.lib.network.utils"
     compileSdk = 36
 
     defaultConfig {
@@ -33,8 +32,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.room.runtime)
-    implementation(libs.koin.android)
-
-    ksp(libs.room.compiler)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
 }

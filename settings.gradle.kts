@@ -35,7 +35,9 @@ include(
     ":feature-events",
 
     // Library modules
-     ":lib-build-config"
+     ":lib-build-config",
+     ":lib-compose-utils",
+     ":lib-network-utils"
 )
 
 // Data modules
@@ -51,3 +53,5 @@ project(":feature-events").projectDir = file("features/feature-events")
 
 // Library modules
 project(":lib-build-config").projectDir = file("libraries/lib-build-config")
+project(":lib-compose-utils").projectDir = file("libraries/lib-compose-utils")
+project(":lib-network-utils").projectDir = file("libraries/lib-network-utils")

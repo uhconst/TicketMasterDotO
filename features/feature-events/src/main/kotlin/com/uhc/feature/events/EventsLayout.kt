@@ -1,9 +1,12 @@
 package com.uhc.feature.events
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,11 +16,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,18 +44,22 @@ fun EventsScreen() {
     val viewModel: EventListViewModel = koinViewModel()
 
     val events by viewModel.events.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.fetchEvents()
+    LaunchedEffect(Unit) {
+        viewModel.fetchEvents()
+    }
 
     EventsLayout(
         events = events,
-        isLoading = /*viewModel.isLoading.value*/ false,
+        isLoading = isLoading,
         onRefresh = { viewModel.fetchEvents() },
         onFavouriteClick = { event -> viewModel.onClickFavouriteEvent(event) },
         onFabClick = { /* Handle FAB click */ }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventsLayout(
     events: List<Event>,
@@ -55,7 +68,41 @@ fun EventsLayout(
     onFavouriteClick: (Event) -> Unit,
     onFabClick: () -> Unit
 ) {
-    LazyColumn {
+    val state = rememberPullToRefreshState()
+
+    PullToRefreshBox(
+        isRefreshing = isLoading,
+        onRefresh = onRefresh,
+        state = state,
+        indicator = {
+            Indicator(
+                modifier = Modifier.align(Alignment.TopCenter),
+                isRefreshing = isLoading,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                state = state
+            )
+        },
+    ) {
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(
+                items = events,
+                key = { it.id }
+            ) { event ->
+                EventItemCard(
+                    modifier = Modifier.animateItem(), //todo not working
+                    event = event,
+                    onFavouriteClick = { onFavouriteClick(event) }
+                )
+            }
+        }
+    }
+
+/*    LazyColumn {
         items(
             items = events,
             key = { it.id }
@@ -66,7 +113,7 @@ fun EventsLayout(
                 onFavouriteClick = { onFavouriteClick(event) }
             )
         }
-    }
+    }*/
 }
 
 @Composable
@@ -78,7 +125,7 @@ private fun EventItemCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+//            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Row(
             modifier = modifier
