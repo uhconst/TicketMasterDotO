@@ -56,10 +56,13 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature-events"))
+    implementation(project(":lib-build-config"))
+    implementation(project(":lib-compose-utils"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.compose)
@@ -67,15 +70,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.koin.android)
-
-    implementation(libs.room.runtime) //todo shouldn't need in APP
-    ksp(libs.room.compiler)
-    api(project(":feature-events")) //todo shouldn't need in APP
-
-    api(project(":repo-favourites"))
-    api(project(":domain-events")) //todo
-    api(project(":domain-favourites")) //todo
-    implementation(project(":lib-build-config"))
 
     testImplementation(libs.junit)
 

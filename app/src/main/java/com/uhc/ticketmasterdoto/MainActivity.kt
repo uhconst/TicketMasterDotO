@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import com.uhc.ticketmasterdoto.navigation.NavigationStack
 import com.uhc.ticketmasterdoto.navigation.Routes
 
@@ -22,28 +23,22 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            Scaffold(
-                bottomBar = {
-                    NavigationBar {
-                        NavigationBarItem(
-                            selected = false,
-                            onClick = { navController.navigate(Routes.Main) },
-                            label = { Text("Home") },
-                            icon = { Icon(Icons.Default.Home, contentDescription = null) }
-                        )
-                        // Add more items as needed
+            TicketMasterTheme {
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                selected = false,
+                                onClick = { navController.navigate(Routes.Main) },
+                                label = { Text("Home") },
+                                icon = { Icon(Icons.Default.Home, contentDescription = null) }
+                            )
+                        }
                     }
+                ) { innerPadding ->
+                    NavigationStack(Modifier.padding(innerPadding))
                 }
-            ) { innerPadding ->
-                NavigationStack(Modifier.padding(innerPadding))
             }
-
-    /*        Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                NavigationStack()
-            }*/
         }
     }
 }

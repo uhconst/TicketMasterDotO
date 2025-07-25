@@ -20,7 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
@@ -31,12 +30,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
+import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
+import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -94,26 +93,13 @@ fun EventsLayout(
                 key = { it.id }
             ) { event ->
                 EventItemCard(
-                    modifier = Modifier.animateItem(), //todo not working
+                    modifier = Modifier.animateItem(),
                     event = event,
                     onFavouriteClick = { onFavouriteClick(event) }
                 )
             }
         }
     }
-
-/*    LazyColumn {
-        items(
-            items = events,
-            key = { it.id }
-        ) { event ->
-            EventItemCard(
-                modifier = Modifier.animateItem(), //todo not working
-                event = event,
-                onFavouriteClick = { onFavouriteClick(event) }
-            )
-        }
-    }*/
 }
 
 @Composable
@@ -123,9 +109,7 @@ private fun EventItemCard(
     onFavouriteClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-//            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = modifier
@@ -149,21 +133,18 @@ private fun EventItemCard(
                 Text(
                     text = event.name,
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.Black,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = event.venue,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = event.dates,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -178,55 +159,59 @@ private fun EventItemCard(
     }
 }
 
-@Preview
+@TicketMasterPreview
 @Composable
-fun EventItemPreview () {
-    EventItemCard(
-        event = Event(
-            id = "1",
-            name = "Sample Event",
-            imageUrl = "",
-            dates = "2023-10-01 to 2023-10-05",
-            venue = "Sample Venue",
-            favourite = false
-        ),
-        onFavouriteClick = { }
-    )
-}
-
-@Preview
-@Composable
-fun EventsLayoutPreview() {
-    EventsLayout(
-        events = listOf(
-            Event(
+fun EventItemPreview() {
+    TicketMasterTheme {
+        EventItemCard(
+            event = Event(
                 id = "1",
-                name = "New York Yankees vs Boston Red Sox",
-                venue = "Yankee Stadium",
-                dates = "2023-10-01 to 2023-10-02",
+                name = "Sample Event",
                 imageUrl = "",
+                dates = "2023-10-01 to 2023-10-05",
+                venue = "Sample Venue",
                 favourite = false
             ),
-            Event(
-                id = "2",
-                name = "Hamilton",
-                venue = "Richard Rodgers Theatre",
-                dates = "2023-10-03",
-                imageUrl = "",
-                favourite = true
+            onFavouriteClick = { }
+        )
+    }
+}
+
+@TicketMasterPreview
+@Composable
+fun EventsLayoutPreview() {
+    TicketMasterTheme {
+        EventsLayout(
+            events = listOf(
+                Event(
+                    id = "1",
+                    name = "New York Yankees vs Boston Red Sox",
+                    venue = "Yankee Stadium",
+                    dates = "2023-10-01 to 2023-10-02",
+                    imageUrl = "",
+                    favourite = false
+                ),
+                Event(
+                    id = "2",
+                    name = "Hamilton",
+                    venue = "Richard Rodgers Theatre",
+                    dates = "2023-10-03",
+                    imageUrl = "",
+                    favourite = true
+                ),
+                Event(
+                    id = "3",
+                    name = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+                    venue = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+                    dates = "2023-10-03",
+                    imageUrl = "",
+                    favourite = true
+                )
             ),
-            Event(
-                id = "3",
-                name = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
-                venue = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
-                dates = "2023-10-03",
-                imageUrl = "",
-                favourite = true
-            )
-        ),
-        isLoading = false,
-        onRefresh = {},
-        onFavouriteClick = {},
-        onFabClick = {}
-    )
+            isLoading = false,
+            onRefresh = {},
+            onFavouriteClick = {},
+            onFabClick = {}
+        )
+    }
 }

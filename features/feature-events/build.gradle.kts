@@ -34,6 +34,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain-events"))
+    implementation(project(":domain-favourites"))
+    implementation(project(":lib-compose-utils"))
+
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.material.icons)
@@ -53,6 +57,4 @@ dependencies {
     // Android Studio Preview support
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(project(":domain-events"))
-    implementation(project(":domain-favourites"))
 }
