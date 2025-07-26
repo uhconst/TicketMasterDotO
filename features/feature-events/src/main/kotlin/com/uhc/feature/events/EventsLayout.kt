@@ -25,7 +25,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,16 +44,11 @@ fun EventsLayout() {
     val events by viewModel.events.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchEvents()
-    }
-
     EventsList(
         events = events,
         isLoading = isLoading,
-        onRefresh = { viewModel.fetchEvents() },
-        onFavouriteClick = { event -> viewModel.onClickFavouriteEvent(event) },
-        onFabClick = { /* Handle FAB click */ }
+        onRefresh = { viewModel.refreshEvents() },
+        onFavouriteClick = { event -> viewModel.onClickFavouriteEvent(event) }
     )
 }
 
@@ -64,8 +58,7 @@ private fun EventsList(
     events: List<Event>,
     isLoading: Boolean,
     onRefresh: () -> Unit,
-    onFavouriteClick: (Event) -> Unit,
-    onFabClick: () -> Unit
+    onFavouriteClick: (Event) -> Unit
 ) {
     val state = rememberPullToRefreshState()
 
@@ -210,8 +203,7 @@ private fun EventsLayoutPreview() {
             ),
             isLoading = false,
             onRefresh = {},
-            onFavouriteClick = {},
-            onFabClick = {}
+            onFavouriteClick = {}
         )
     }
 }

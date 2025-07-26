@@ -27,20 +27,19 @@ Tapping add to favourite will move the event to the top of the list in a separat
 - Dates
 - Add to favourite action
 
+## Favourites Events Screen
+- Displays developer name, role, and a short bio.
+- Shows a card with a brief description of the app.
+- Provides buttons linking to the developer’s GitHub and LinkedIn profiles.
+- Fully scrollable layout for smaller screens.
+- Theming support via MaterialTheme and custom theme.
+
 ## Tests
-- Activity
+- Layout
 - View Model
-- Repository
 - Use Case
 - Dao
 - Modules
-
-## Favourites Events Screen
-- Name
-- Image
-- Venue name
-- Dates
-- Add to favourite action
 
 ## What you should expect
 - Display a list of the next 50 events in London from the [Ticketmaster API]

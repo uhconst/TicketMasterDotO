@@ -36,4 +36,10 @@ dependencies {
     implementation(project(":repo-favourites"))
 
     implementation(libs.koin.android)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.koin.test)
 }

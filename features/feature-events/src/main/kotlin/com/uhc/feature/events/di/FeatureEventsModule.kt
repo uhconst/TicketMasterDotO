@@ -12,5 +12,5 @@ val featureEventsModule = module {
         domainFavouritesModule
     )
 
-    viewModel { EventListViewModel(get(), get(), get()) }
+    viewModel { EventListViewModel(get(), get()) }
 }

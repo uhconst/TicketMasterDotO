@@ -2,70 +2,46 @@ package com.uhc.feature.events
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uhc.domain.events.exception.DefaultException
 import com.uhc.domain.events.GetEventsUseCase
 import com.uhc.domain.events.model.Event
-import com.uhc.domain.favourites.DeleteFavouriteEventUseCase
-import com.uhc.domain.favourites.SaveFavouriteEventUseCase
+import com.uhc.domain.favourites.DeleteOrSaveFavouriteEventUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class EventListViewModel(
     private val getEventsUseCase: GetEventsUseCase,
-    private val saveFavouriteEventUseCase: SaveFavouriteEventUseCase,
-    private val deleteFavouriteEventUseCase: DeleteFavouriteEventUseCase
+    private val deleteOrSaveFavouriteEventUseCase: DeleteOrSaveFavouriteEventUseCase
 ) : ViewModel() {
 
-    sealed class State {
-        data object GoToFavourite : State()
-    }
-
-    private var size: Int = 50
-
-    private val _events = MutableStateFlow<List<Event>>(emptyList())
-    val events: StateFlow<List<Event>> = _events
+    private val refreshTrigger = MutableStateFlow(Unit)
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val _error = MutableStateFlow<DefaultException?>(null)
-    val error: StateFlow<DefaultException?> = _error
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val events: StateFlow<List<Event>> = refreshTrigger
+        .flatMapLatest { getEventsUseCase() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val _state = MutableStateFlow<State?>(null)
-    val state: StateFlow<State?> = _state
-
-    fun fetchEvents() {
+    fun refreshEvents() {
         _isLoading.value = true
+        refreshTrigger.value = Unit
+
         viewModelScope.launch {
-            // todo remove try catches
-            try {
-                val events = getEventsUseCase.getEvents(size)
-                _events.value = events.sortedByDescending { it.favourite }
-            } catch (e: DefaultException) {
-                _error.value = e
-            } finally {
-                _isLoading.value = false
-            }
+            delay(2000)
+            _isLoading.value = false
         }
     }
 
     fun onClickFavouriteEvent(event: Event) {
         viewModelScope.launch {
-            try {
-                if (event.favourite) {
-                    deleteFavouriteEventUseCase(event.id)
-                } else {
-                    saveFavouriteEventUseCase(event.id)
-                }
-                fetchEvents()
-            } catch (e: DefaultException) {
-                _error.value = e
-            }
+            deleteOrSaveFavouriteEventUseCase(event.id, event.favourite)
         }
-    }
-
-    fun onClickFavourite() {
-        _state.value = State.GoToFavourite
     }
 }
