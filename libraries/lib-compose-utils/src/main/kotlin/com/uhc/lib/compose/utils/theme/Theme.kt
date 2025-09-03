@@ -5,6 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalDimensions = staticCompositionLocalOf { Dimensions() }
 
 private val DarkColorScheme = darkColorScheme(
     primary = color_sky362_100a,
@@ -45,11 +49,15 @@ fun TicketMasterTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    MaterialTheme(
-        colorScheme = when {
-            darkTheme -> DarkColorScheme
-            else -> LightColorScheme
-        },
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalDimensions provides Dimensions()
+    ) {
+        MaterialTheme(
+            colorScheme = when {
+                darkTheme -> DarkColorScheme
+                else -> LightColorScheme
+            },
+            content = content
+        )
+    }
 }

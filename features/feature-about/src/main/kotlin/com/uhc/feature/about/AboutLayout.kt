@@ -25,11 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uhc.lib.compose.utils.R
 import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
+import com.uhc.lib.compose.utils.theme.dimensions
 
 @Composable
 fun AboutLayout() {
@@ -41,11 +41,11 @@ fun AboutLayout() {
             .fillMaxSize()
             .verticalScroll(scrollState)
             .background(MaterialTheme.colorScheme.background)
-            .padding(24.dp),
+            .padding(MaterialTheme.dimensions.spacing.large),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.medium))
 
         Text(
             text = stringResource(R.string.name),
@@ -57,7 +57,7 @@ fun AboutLayout() {
             color = MaterialTheme.colorScheme.primary
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.medium))
 
         Text(
             text = stringResource(R.string.bio),
@@ -65,17 +65,17 @@ fun AboutLayout() {
             lineHeight = 22.sp
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.large))
 
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(MaterialTheme.dimensions.spacing.medium)) {
                 Text(
                     text = stringResource(R.string.about_this_app),
                     style = MaterialTheme.typography.titleMedium
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.small))
                 Text(
                     text = stringResource(R.string.app_description),
                     style = MaterialTheme.typography.bodySmall
@@ -83,10 +83,10 @@ fun AboutLayout() {
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.large))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedButton(
@@ -97,7 +97,7 @@ fun AboutLayout() {
                     contentDescription = stringResource(R.string.github),
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.dimensions.spacing.small))
                 Text(stringResource(R.string.github))
             }
 
@@ -109,7 +109,7 @@ fun AboutLayout() {
                     contentDescription = stringResource(R.string.linkedin),
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.dimensions.spacing.small))
                 Text(stringResource(R.string.linkedin))
             }
         }

@@ -30,11 +30,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
 import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
+import com.uhc.lib.compose.utils.theme.dimensions
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -77,8 +77,8 @@ private fun EventsList(
         },
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(MaterialTheme.dimensions.spacing.medium),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimensions.spacing.small),
             modifier = Modifier.fillMaxSize()
         ) {
             items(
@@ -106,7 +106,7 @@ private fun EventItemCard(
     ) {
         Row(
             modifier = modifier
-                .padding(8.dp)
+                .padding(MaterialTheme.dimensions.spacing.small)
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -116,12 +116,12 @@ private fun EventItemCard(
                 modifier = Modifier
                     .weight(0.3f)
                     .aspectRatio(1.8f)
-                    .padding(end = 8.dp)
+                    .padding(end = MaterialTheme.dimensions.spacing.small)
             )
             Column(
                 modifier = Modifier
                     .weight(0.7f)
-                    .padding(end = 8.dp)
+                    .padding(end = MaterialTheme.dimensions.spacing.small)
             ) {
                 Text(
                     text = event.name,
