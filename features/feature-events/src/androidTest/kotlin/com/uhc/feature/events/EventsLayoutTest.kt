@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.uhc.domain.events.model.Event
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
 
@@ -90,7 +90,7 @@ class EventsLayoutTest {
 
         // Click first favourite icon and verify callback receives first event
         composeTestRule.onAllNodesWithTag("event_favourite_icon")[0].performClick()
-        Assert.assertEquals(events.first(), favouriteClicked)
+        assertThat(favouriteClicked).isEqualTo(events.first())
     }
 
     @Test
@@ -109,6 +109,6 @@ class EventsLayoutTest {
 
         composeTestRule.onNodeWithTag("event_favourite_icon").performClick()
 
-        Assert.assertTrue(invoked)
+        assertThat(invoked).isTrue()
     }
 }
