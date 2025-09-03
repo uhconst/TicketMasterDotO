@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.uhc.lib.compose.utils.R
@@ -48,10 +49,12 @@ fun AboutLayout() {
         Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.medium))
 
         Text(
+            modifier = Modifier.testTag("about_name"),
             text = stringResource(R.string.name),
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
+            modifier = Modifier.testTag("about_role"),
             text = stringResource(R.string.role),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
@@ -60,6 +63,7 @@ fun AboutLayout() {
         Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.medium))
 
         Text(
+            modifier = Modifier.testTag("about_bio"),
             text = stringResource(R.string.bio),
             style = MaterialTheme.typography.bodyMedium,
             lineHeight = 22.sp
@@ -72,11 +76,13 @@ fun AboutLayout() {
         ) {
             Column(modifier = Modifier.padding(MaterialTheme.dimensions.spacing.medium)) {
                 Text(
+                    modifier = Modifier.testTag("about_this_app_title"),
                     text = stringResource(R.string.about_this_app),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.dimensions.spacing.small))
                 Text(
+                    modifier = Modifier.testTag("about_app_description"),
                     text = stringResource(R.string.app_description),
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -90,6 +96,7 @@ fun AboutLayout() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedButton(
+                modifier = Modifier.testTag("about_github_button"),
                 onClick = { uriHandler.openUri("https://github.com/uhconst") }
             ) {
                 Icon(
@@ -102,6 +109,7 @@ fun AboutLayout() {
             }
 
             OutlinedButton(
+                modifier = Modifier.testTag("about_linkedin_button"),
                 onClick = { uriHandler.openUri("https://www.linkedin.com/in/uryel-constancio-49247384/") }
             ) {
                 Icon(
