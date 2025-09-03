@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
@@ -124,25 +125,31 @@ internal fun EventItemCard(
                     .padding(end = MaterialTheme.dimensions.spacing.small)
             ) {
                 Text(
+                    modifier = Modifier.testTag("event_name"),
                     text = event.name,
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
+                    modifier = Modifier.testTag("event_venue"),
                     text = event.venue,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
+                    modifier = Modifier.testTag("event_dates"),
                     text = event.dates,
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            IconButton(onClick = onFavouriteClick) {
+            IconButton(
+                modifier = Modifier.testTag("event_favourite_icon"),
+                onClick = onFavouriteClick
+            ) {
                 Icon(
                     imageVector = if (event.favourite) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = "Favourite"

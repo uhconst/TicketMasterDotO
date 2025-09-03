@@ -1,9 +1,11 @@
 package com.uhc.feature.events
 
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.uhc.domain.events.model.Event
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
@@ -47,14 +49,20 @@ class EventsLayoutTest {
                 )
             }
         }
+        val eventNames = composeTestRule.onAllNodesWithTag("event_name")
+        eventNames.assertCountEquals(2)
+        eventNames[0].assertTextEquals("Event One").assertIsDisplayed()
+        eventNames[1].assertTextEquals("Event Two").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Event One").assertExists()
-        composeTestRule.onNodeWithText("Venue One").assertExists()
-        composeTestRule.onNodeWithText("2025-01-01").assertExists()
+        val eventVenues = composeTestRule.onAllNodesWithTag("event_venue")
+        eventVenues.assertCountEquals(2)
+        eventVenues[0].assertTextEquals("Venue One").assertIsDisplayed()
+        eventVenues[1].assertTextEquals("Venue Two").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Event Two").assertExists()
-        composeTestRule.onNodeWithText("Venue Two").assertExists()
-        composeTestRule.onNodeWithText("2025-01-02").assertExists()
+        val eventDates = composeTestRule.onAllNodesWithTag("event_dates")
+        eventDates.assertCountEquals(2)
+        eventDates[0].assertTextEquals("2025-01-01").assertIsDisplayed()
+        eventDates[1].assertTextEquals("2025-01-02").assertIsDisplayed()
     }
 
     @Test
@@ -64,7 +72,7 @@ class EventsLayoutTest {
             Event("2", "B", "", "D2", "V2", true),
             Event("3", "C", "", "D3", "V3", false),
         )
-        var lastClicked: Event? = null
+        var favouriteClicked: Event? = null
 
         composeTestRule.setContent {
             TicketMasterTheme {
@@ -72,18 +80,17 @@ class EventsLayoutTest {
                     events = events,
                     isLoading = false,
                     onRefresh = {},
-                    onFavouriteClick = { e -> lastClicked = e }
+                    onFavouriteClick = { favouriteClicked = it }
                 )
             }
         }
 
         // There should be as many Favourite buttons as items
-        composeTestRule.onAllNodesWithContentDescription("Favourite").assertCountEquals(events.size)
+        composeTestRule.onAllNodesWithTag("event_favourite_icon").assertCountEquals(events.size)
 
         // Click first favourite icon and verify callback receives first event
-        val favourites = composeTestRule.onAllNodesWithContentDescription("Favourite")
-        favourites[0].performClick()
-        Assert.assertEquals(events.first(), lastClicked)
+        composeTestRule.onAllNodesWithTag("event_favourite_icon")[0].performClick()
+        Assert.assertEquals(events.first(), favouriteClicked)
     }
 
     @Test
@@ -100,7 +107,7 @@ class EventsLayoutTest {
             }
         }
 
-        composeTestRule.onAllNodesWithContentDescription("Favourite").get(0).performClick()
+        composeTestRule.onNodeWithTag("event_favourite_icon").performClick()
 
         Assert.assertTrue(invoked)
     }
