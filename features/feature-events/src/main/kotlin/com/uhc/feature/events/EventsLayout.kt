@@ -54,7 +54,7 @@ fun EventsLayout() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EventsList(
+internal fun EventsList(
     events: List<Event>,
     isLoading: Boolean,
     onRefresh: () -> Unit,
@@ -96,7 +96,7 @@ private fun EventsList(
 }
 
 @Composable
-private fun EventItemCard(
+internal fun EventItemCard(
     modifier: Modifier = Modifier,
     event: Event,
     onFavouriteClick: () -> Unit
