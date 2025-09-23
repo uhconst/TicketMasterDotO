@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.uhc.domain.events.model.Event
+import com.uhc.feature.events.state.EventState
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
@@ -21,29 +22,14 @@ class EventsLayoutTest {
     @Test
     fun eventsList_displaysEventTexts() {
         val events = listOf(
-            Event(
-                id = "1",
-                name = "Event One",
-                imageUrl = "",
-                dates = "2025-01-01",
-                venue = "Venue One",
-                favourite = false
-            ),
-            Event(
-                id = "2",
-                name = "Event Two",
-                imageUrl = "",
-                dates = "2025-01-02",
-                venue = "Venue Two",
-                favourite = true
-            )
+            Event("1", "Event One", "", "2025-01-01", "Venue One", false),
+            Event("2", "Event Two", "", "2025-01-02", "Venue Two", true)
         )
 
         composeTestRule.setContent {
             TicketMasterTheme {
                 EventsList(
-                    events = events,
-                    isLoading = false,
+                    eventState = EventState.Success(events),
                     onRefresh = {},
                     onFavouriteClick = {}
                 )
@@ -77,8 +63,7 @@ class EventsLayoutTest {
         composeTestRule.setContent {
             TicketMasterTheme {
                 EventsList(
-                    events = events,
-                    isLoading = false,
+                    eventState = EventState.Success(events),
                     onRefresh = {},
                     onFavouriteClick = { favouriteClicked = it }
                 )
@@ -110,5 +95,54 @@ class EventsLayoutTest {
         composeTestRule.onNodeWithTag("event_favourite_icon").performClick()
 
         assertThat(invoked).isTrue()
+    }
+
+    @Test
+    fun eventsError_displaysErrorMessageAndRetryButton() {
+        val errorMessage = "Something went wrong"
+        composeTestRule.setContent {
+            TicketMasterTheme {
+                EventsError(error = EventState.Error(errorMessage))
+            }
+        }
+        composeTestRule
+            .onNodeWithTag("error_message")
+            .assertTextEquals(errorMessage)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("retry_button")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun eventsError_retryButtonClick() {
+        val errorMessage = "Something went wrong"
+        var invoked = false
+        composeTestRule.setContent {
+            TicketMasterTheme {
+                EventsError(
+                    error = EventState.Error(errorMessage),
+                    onRetry = { invoked = true }
+                )
+            }
+        }
+        composeTestRule
+            .onNodeWithTag("retry_button")
+            .performClick()
+
+        assertThat(invoked).isTrue()
+    }
+
+    @Test
+    fun eventsLoading_displaysLoadingIndicatorAndText() {
+        composeTestRule.setContent {
+            TicketMasterTheme {
+                EventsLoading()
+            }
+        }
+        composeTestRule
+            .onNodeWithTag("loading_text")
+            .assertTextEquals("Loading...")
+            .assertIsDisplayed()
     }
 }

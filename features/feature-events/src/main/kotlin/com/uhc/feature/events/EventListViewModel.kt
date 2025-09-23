@@ -5,13 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.uhc.domain.events.GetEventsUseCase
 import com.uhc.domain.events.model.Event
 import com.uhc.domain.favourites.DeleteOrSaveFavouriteEventUseCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import com.uhc.feature.events.state.EventState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class EventListViewModel(
@@ -19,23 +18,29 @@ class EventListViewModel(
     private val deleteOrSaveFavouriteEventUseCase: DeleteOrSaveFavouriteEventUseCase
 ) : ViewModel() {
 
-    private val refreshTrigger = MutableStateFlow(Unit)
+    private val _eventState = MutableStateFlow<EventState>(EventState.Loading)
+    val eventState: StateFlow<EventState> = _eventState.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    init {
+        loadEvents()
+    }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val events: StateFlow<List<Event>> = refreshTrigger
-        .flatMapLatest { getEventsUseCase() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    fun refreshEvents() {
-        _isLoading.value = true
-        refreshTrigger.value = Unit
-
+    fun loadEvents() {
         viewModelScope.launch {
-            delay(2000)
-            _isLoading.value = false
+            getEventsUseCase()
+                .onStart {
+                    _eventState.value = EventState.Loading
+                }
+                .catch { e ->
+                    _eventState.value = EventState.Error(e.message ?: "Unknown error")
+                }
+                .collect { events ->
+                    if (events.isEmpty()) {
+                        _eventState.value = EventState.Error("No events found")
+                    } else {
+                        _eventState.value = EventState.Success(events)
+                    }
+                }
         }
     }
 

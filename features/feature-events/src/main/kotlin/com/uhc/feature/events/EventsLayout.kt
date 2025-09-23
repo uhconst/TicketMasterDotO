@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
+import com.uhc.feature.events.state.EventState
 import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import com.uhc.lib.compose.utils.theme.dimensions
@@ -42,35 +47,42 @@ import org.koin.androidx.compose.koinViewModel
 fun EventsLayout() {
     val viewModel: EventListViewModel = koinViewModel()
 
-    val events by viewModel.events.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val eventState by viewModel.eventState.collectAsState()
 
-    EventsList(
-        events = events,
-        isLoading = isLoading,
-        onRefresh = { viewModel.refreshEvents() },
-        onFavouriteClick = { event -> viewModel.onClickFavouriteEvent(event) }
-    )
+    when (eventState) {
+        is EventState.Success -> {
+            EventsList(
+                eventState = eventState as EventState.Success,
+                onRefresh = { viewModel.loadEvents() },
+                onFavouriteClick = { event -> viewModel.onClickFavouriteEvent(event) }
+            )
+        }
+
+        is EventState.Error -> {
+            EventsError(error = eventState as EventState.Error)
+        }
+
+        EventState.Loading -> EventsLoading()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EventsList(
-    events: List<Event>,
-    isLoading: Boolean,
+    eventState: EventState.Success,
     onRefresh: () -> Unit,
     onFavouriteClick: (Event) -> Unit
 ) {
     val state = rememberPullToRefreshState()
 
     PullToRefreshBox(
-        isRefreshing = isLoading,
+        isRefreshing = false,
         onRefresh = onRefresh,
         state = state,
         indicator = {
             Indicator(
                 modifier = Modifier.align(Alignment.TopCenter),
-                isRefreshing = isLoading,
+                isRefreshing = false,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 state = state
@@ -83,7 +95,7 @@ internal fun EventsList(
             modifier = Modifier.fillMaxSize()
         ) {
             items(
-                items = events,
+                items = eventState.events,
                 key = { it.id }
             ) { event ->
                 EventItemCard(
@@ -159,6 +171,69 @@ internal fun EventItemCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun EventsError(
+    error: EventState.Error,
+    onRetry: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(MaterialTheme.dimensions.spacing.large),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.ErrorOutline,
+            contentDescription = "Error",
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier
+                .padding(bottom = MaterialTheme.dimensions.spacing.medium)
+                .size(MaterialTheme.dimensions.iconSize.xLarge)
+        )
+        Text(
+            text = error.message,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(bottom = MaterialTheme.dimensions.spacing.large)
+                .testTag("error_message")
+        )
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.testTag("retry_button")
+        ) {
+            Text(
+                modifier = Modifier.testTag("retry_button_text"),
+                text = "Retry"
+            )
+        }
+    }
+}
+
+@Composable
+internal fun EventsLoading() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(MaterialTheme.dimensions.spacing.large),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.primary
+        )
+        Text(
+            text = "Loading...",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(top = MaterialTheme.dimensions.spacing.large)
+                .testTag("loading_text")
+        )
+    }
+}
+
 @TicketMasterPreview
 @Composable
 private fun EventItemPreview() {
@@ -182,35 +257,52 @@ private fun EventItemPreview() {
 private fun EventsLayoutPreview() {
     TicketMasterTheme {
         EventsList(
-            events = listOf(
-                Event(
-                    id = "1",
-                    name = "New York Yankees vs Boston Red Sox",
-                    venue = "Yankee Stadium",
-                    dates = "2023-10-01 to 2023-10-02",
-                    imageUrl = "",
-                    favourite = false
-                ),
-                Event(
-                    id = "2",
-                    name = "Hamilton",
-                    venue = "Richard Rodgers Theatre",
-                    dates = "2023-10-03",
-                    imageUrl = "",
-                    favourite = true
-                ),
-                Event(
-                    id = "3",
-                    name = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
-                    venue = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
-                    dates = "2023-10-03",
-                    imageUrl = "",
-                    favourite = true
+            eventState = EventState.Success(
+                listOf(
+                    Event(
+                        id = "1",
+                        name = "New York Yankees vs Boston Red Sox",
+                        venue = "Yankee Stadium",
+                        dates = "2023-10-01 to 2023-10-02",
+                        imageUrl = "",
+                        favourite = false
+                    ),
+                    Event(
+                        id = "2",
+                        name = "Hamilton",
+                        venue = "Richard Rodgers Theatre",
+                        dates = "2023-10-03",
+                        imageUrl = "",
+                        favourite = true
+                    ),
+                    Event(
+                        id = "3",
+                        name = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+                        venue = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.",
+                        dates = "2023-10-03",
+                        imageUrl = "",
+                        favourite = true
+                    )
                 )
             ),
-            isLoading = false,
             onRefresh = {},
             onFavouriteClick = {}
         )
+    }
+}
+
+@TicketMasterPreview
+@Composable
+private fun EventsErrorPreview() {
+    TicketMasterTheme {
+        EventsError(error = EventState.Error("Failed to load events"))
+    }
+}
+
+@TicketMasterPreview
+@Composable
+private fun EventsLoadingPreview() {
+    TicketMasterTheme {
+        EventsLoading()
     }
 }
