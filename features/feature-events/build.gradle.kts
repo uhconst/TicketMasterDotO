@@ -40,7 +40,6 @@ dependencies {
 
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

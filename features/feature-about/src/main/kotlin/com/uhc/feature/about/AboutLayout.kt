@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.uhc.lib.compose.utils.R
@@ -100,7 +98,7 @@ fun AboutLayout() {
                 onClick = { uriHandler.openUri("https://github.com/uhconst") }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Code,
+                    painter = painterResource(id = R.drawable.code_24px),
                     contentDescription = stringResource(R.string.github),
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -113,7 +111,7 @@ fun AboutLayout() {
                 onClick = { uriHandler.openUri("https://www.linkedin.com/in/uryel-constancio-49247384/") }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Link,
+                    painter = painterResource(id = R.drawable.link_24px),
                     contentDescription = stringResource(R.string.linkedin),
                     tint = MaterialTheme.colorScheme.primary
                 )

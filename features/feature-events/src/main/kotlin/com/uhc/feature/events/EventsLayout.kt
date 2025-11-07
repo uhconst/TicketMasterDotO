@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,10 +30,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
 import com.uhc.feature.events.state.EventState
+import com.uhc.lib.compose.utils.R
 import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import com.uhc.lib.compose.utils.theme.dimensions
@@ -163,7 +161,10 @@ internal fun EventItemCard(
                 onClick = onFavouriteClick
             ) {
                 Icon(
-                    imageVector = if (event.favourite) Icons.Default.Star else Icons.Default.StarBorder,
+                    painter = painterResource(
+                        id = if (event.favourite) R.drawable.favorite_filled_24px
+                        else R.drawable.favorite_24px
+                    ),
                     contentDescription = "Favourite"
                 )
             }
@@ -185,7 +186,7 @@ internal fun EventsError(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Default.ErrorOutline,
+            painter = painterResource(id = R.drawable.error_24px),
             contentDescription = "Error",
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier

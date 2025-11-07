@@ -35,7 +35,6 @@ android {
 dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.compose.ui.tooling.preview)
