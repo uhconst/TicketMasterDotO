@@ -1,5 +1,8 @@
 package com.uhc.feature.events
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -29,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -160,7 +164,16 @@ internal fun EventItemCard(
                 modifier = Modifier.testTag("event_favourite_icon"),
                 onClick = onFavouriteClick
             ) {
+                val scale by animateFloatAsState(
+                    targetValue = if (event.favourite) 1.2f else 1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                )
                 Icon(
+                    modifier = Modifier
+                        .scale(scale),
                     painter = painterResource(
                         id = if (event.favourite) R.drawable.favorite_filled_24px
                         else R.drawable.favorite_24px
