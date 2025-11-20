@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.uhc.feature.about.AboutLayout
+import com.uhc.feature.chatbot.ChatbotLayout
 import com.uhc.feature.events.EventDetailsLayout
 import com.uhc.feature.events.EventListLayout
 import com.uhc.lib.compose.utils.theme.LocalAnimatedVisibilityScope
@@ -49,6 +50,9 @@ fun TicketMasterNavHost(
                         eventId = args.eventId
                     )
                 }
+            }
+            composable<NavRoute.Chatbot> {
+                ChatbotLayout()
             }
             composable<NavRoute.About> {
                 AboutLayout()

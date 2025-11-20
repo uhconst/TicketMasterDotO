@@ -1,5 +1,6 @@
 <resources>
     <string name="home_bottom_nav">Home</string>
+    <string name="chatbot_bottom_nav">Chatbot</string>
     <string name="about_bottom_nav">About</string>
     <string name="name">Uryel Constancio</string>
     <string name="role">Senior Android Developer</string>
