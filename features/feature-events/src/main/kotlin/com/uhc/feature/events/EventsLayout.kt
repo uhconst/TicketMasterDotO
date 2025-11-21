@@ -117,10 +117,10 @@ internal fun EventItemCard(
     onFavouriteClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .padding(MaterialTheme.dimensions.spacing.small)
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
