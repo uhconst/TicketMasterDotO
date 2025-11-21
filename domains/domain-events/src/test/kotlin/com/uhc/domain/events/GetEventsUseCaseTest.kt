@@ -38,7 +38,7 @@ class GetEventsUseCaseTest {
 
     @Test
     fun `emits events with correct favourite flags`() = runTest {
-        val favourites = listOf(FavouriteEventEntity("1"))
+        val favourites = listOf(FavouriteEventEntity(id = "1", isFavourite = true))
         every { eventDao.findFavourites() } returns flowOf(favourites)
         coEvery { eventApi.getEvents(any()) } returns EventsResponse.Response(
             embedded = EventsResponse.EmbeddedResponse(
@@ -90,7 +90,14 @@ class GetEventsUseCaseTest {
 
     @Test
     fun `maps all event fields correctly`() = runTest {
-        every { eventDao.findFavourites() } returns flowOf(listOf(FavouriteEventEntity("42")))
+        every { eventDao.findFavourites() } returns flowOf(
+            listOf(
+                FavouriteEventEntity(
+                    id = "42",
+                    isFavourite = true
+                )
+            )
+        )
         coEvery { eventApi.getEvents(any()) } returns EventsResponse.Response(
             embedded = EventsResponse.EmbeddedResponse(
                 events = listOf(

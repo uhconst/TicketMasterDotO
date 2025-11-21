@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.uhc.domain.events.GetEventsUseCase
 import com.uhc.domain.events.model.Event
-import com.uhc.domain.favourites.DeleteOrSaveFavouriteEventUseCase
+import com.uhc.domain.favourites.SetFavouriteEventUseCase
 import com.uhc.feature.events.state.EventState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class EventListViewModel(
     private val getEventsUseCase: GetEventsUseCase,
-    private val deleteOrSaveFavouriteEventUseCase: DeleteOrSaveFavouriteEventUseCase
+    private val setFavouriteEventUseCase: SetFavouriteEventUseCase
 ) : ViewModel() {
 
     private val _eventState = MutableStateFlow<EventState>(EventState.Loading)
@@ -46,7 +46,7 @@ class EventListViewModel(
 
     fun onClickFavouriteEvent(event: Event) {
         viewModelScope.launch {
-            deleteOrSaveFavouriteEventUseCase(event.id, event.favourite)
+            setFavouriteEventUseCase(event.id, !event.favourite)
         }
     }
 }

@@ -7,22 +7,22 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-class DeleteOrSaveFavouriteEventUseCaseTest {
+class SetFavouriteEventUseCaseTest {
 
     private val eventDao: EventDao = mockk(relaxed = true)
-    private val subject = DeleteOrSaveFavouriteEventUseCase(eventDao)
+    private val subject = SetFavouriteEventUseCase(eventDao)
 
     @Test
-    fun `invoke deletes favourite when isEventFavourite is true`() = runTest {
+    fun `invoke upsert favourite when isEventFavourite is true`() = runTest {
         val id = "event1"
         subject.invoke(id, true)
-        coVerify { eventDao.deleteFavourite(FavouriteEventEntity(id)) }
+        coVerify { eventDao.upsertFavourite(FavouriteEventEntity(id, true)) }
     }
 
     @Test
-    fun `invoke inserts favourite when isEventFavourite is false`() = runTest {
+    fun `invoke upsert favourite when isEventFavourite is false`() = runTest {
         val id = "event2"
         subject.invoke(id, false)
-        coVerify { eventDao.insertFavourite(FavouriteEventEntity(id)) }
+        coVerify { eventDao.upsertFavourite(FavouriteEventEntity(id, false)) }
     }
 }

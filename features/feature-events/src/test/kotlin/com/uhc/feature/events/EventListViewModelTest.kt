@@ -3,7 +3,7 @@ package com.uhc.feature.events
 import app.cash.turbine.test
 import com.uhc.domain.events.GetEventsUseCase
 import com.uhc.domain.events.model.Event
-import com.uhc.domain.favourites.DeleteOrSaveFavouriteEventUseCase
+import com.uhc.domain.favourites.SetFavouriteEventUseCase
 import com.uhc.feature.events.state.EventState
 import io.mockk.coVerify
 import io.mockk.every
@@ -22,10 +22,10 @@ class EventListViewModelTest {
 
     private val getEventsUseCase = mockk<GetEventsUseCase>(relaxed = true)
 
-    private val deleteOrSaveFavouriteEventUseCase =
-        mockk<DeleteOrSaveFavouriteEventUseCase>(relaxed = true)
+    private val setFavouriteEventUseCase =
+        mockk<SetFavouriteEventUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
-    private val subject = EventListViewModel(getEventsUseCase, deleteOrSaveFavouriteEventUseCase)
+    private val subject = EventListViewModel(getEventsUseCase, setFavouriteEventUseCase)
 
     @Test
     fun `loadEvents emits Success when events are loaded`() = runTest {
@@ -68,16 +68,16 @@ class EventListViewModelTest {
     }
 
     @Test
-    fun `onClickFavouriteEvent WITH event favourite true THEN calls deleteOrSave use case`() =
+    fun `onClickFavouriteEvent WITH event favourite true THEN calls setFavouriteEvent use case`() =
         runTest(testDispatcher) {
             subject.onClickFavouriteEvent(eventFavourite)
-            coVerify { deleteOrSaveFavouriteEventUseCase("1", true) }
+            coVerify { setFavouriteEventUseCase("1", false) }
         }
 
     @Test
-    fun `onClickFavouriteEvent WITH event favourite false THEN calls deleteOrSave use case`() =
+    fun `onClickFavouriteEvent WITH event favourite false THEN calls setFavouriteEvent use case`() =
         runTest(testDispatcher) {
             subject.onClickFavouriteEvent(eventNotFavourite)
-            coVerify { deleteOrSaveFavouriteEventUseCase("2", false) }
+            coVerify { setFavouriteEventUseCase("2", true) }
         }
 }

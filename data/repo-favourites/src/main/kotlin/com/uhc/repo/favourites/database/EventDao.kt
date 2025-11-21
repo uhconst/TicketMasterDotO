@@ -1,7 +1,6 @@
 package com.uhc.repo.favourites.database
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,13 +13,9 @@ interface EventDao {
 
     /** Insert the [FavouriteEventEntity] into the database. */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavourite(favouriteEventEntity: FavouriteEventEntity)
-
-    /** Delete favourite event. */
-    @Delete
-    suspend fun deleteFavourite(favouriteEventEntity: FavouriteEventEntity)
+    suspend fun upsertFavourite(favouriteEventEntity: FavouriteEventEntity)
 
     /** Find all favourites. */
-    @Query("SELECT * FROM favourite_event")
+    @Query("SELECT * FROM favourite_event WHERE isFavourite = 1")
     fun findFavourites(): Flow<List<FavouriteEventEntity>>
 }
