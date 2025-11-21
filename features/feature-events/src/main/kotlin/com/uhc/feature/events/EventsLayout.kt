@@ -28,8 +28,10 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -167,8 +169,8 @@ internal fun EventItemCard(
                 val scale by animateFloatAsState(
                     targetValue = if (event.favourite) 1.2f else 1f,
                     animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessMedium
+                        dampingRatio = Spring.DampingRatioHighBouncy,
+                        stiffness = Spring.StiffnessVeryLow
                     )
                 )
                 Icon(
