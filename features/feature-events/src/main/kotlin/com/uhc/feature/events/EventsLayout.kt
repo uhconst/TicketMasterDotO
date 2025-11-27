@@ -63,7 +63,7 @@ fun EventsLayout() {
         }
 
         is EventState.Error -> {
-            EventsError(error = eventState as EventState.Error)
+            EventsError(error = eventState as EventState.Error, onRetry = viewModel::loadEvents)
         }
 
         EventState.Loading -> EventsLoading()
