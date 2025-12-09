@@ -15,7 +15,7 @@ class GetEventByIdUseCase(
             imageUrl = response.images.firstOrNull()?.url ?: "",
             dates = response.dates.start.localDate,
             venue = response._embedded.venues.firstOrNull()?.name ?: "",
-            favourite = false //todo nullable
+            favourite = false
         )
     }
 }
