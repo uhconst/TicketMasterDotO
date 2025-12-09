@@ -8,13 +8,13 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.uhc.domain.events.model.Event
-import com.uhc.feature.events.state.EventState
+import com.uhc.feature.events.state.EventListState
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
 
-class EventsLayoutTest {
+class EventListLayoutTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -29,24 +29,26 @@ class EventsLayoutTest {
         composeTestRule.setContent {
             TicketMasterTheme {
                 EventsList(
-                    eventState = EventState.Success(events),
+                    eventListState = EventListState.Success(events),
                     onRefresh = {},
-                    onFavouriteClick = {}
+                    onFavouriteClick = {},
+                    onEventClick = {}
                 )
             }
         }
+
         val eventNames = composeTestRule.onAllNodesWithTag("event_name")
-        eventNames.assertCountEquals(2)
+        eventNames.assertCountEquals(events.size)
         eventNames[0].assertTextEquals("Event One").assertIsDisplayed()
         eventNames[1].assertTextEquals("Event Two").assertIsDisplayed()
 
         val eventVenues = composeTestRule.onAllNodesWithTag("event_venue")
-        eventVenues.assertCountEquals(2)
+        eventVenues.assertCountEquals(events.size)
         eventVenues[0].assertTextEquals("Venue One").assertIsDisplayed()
         eventVenues[1].assertTextEquals("Venue Two").assertIsDisplayed()
 
         val eventDates = composeTestRule.onAllNodesWithTag("event_dates")
-        eventDates.assertCountEquals(2)
+        eventDates.assertCountEquals(events.size)
         eventDates[0].assertTextEquals("2025-01-01").assertIsDisplayed()
         eventDates[1].assertTextEquals("2025-01-02").assertIsDisplayed()
     }
@@ -63,18 +65,23 @@ class EventsLayoutTest {
         composeTestRule.setContent {
             TicketMasterTheme {
                 EventsList(
-                    eventState = EventState.Success(events),
+                    eventListState = EventListState.Success(events),
                     onRefresh = {},
-                    onFavouriteClick = { favouriteClicked = it }
+                    onFavouriteClick = { favouriteClicked = it },
+                    onEventClick = {}
                 )
             }
         }
 
-        // There should be as many Favourite buttons as items
-        composeTestRule.onAllNodesWithTag("event_favourite_icon").assertCountEquals(events.size)
+        composeTestRule
+            .onAllNodesWithTag("event_favourite_icon")
+            .assertCountEquals(events.size)
 
         // Click first favourite icon and verify callback receives first event
-        composeTestRule.onAllNodesWithTag("event_favourite_icon")[0].performClick()
+        composeTestRule
+            .onAllNodesWithTag("event_favourite_icon")[0]
+            .performClick()
+
         assertThat(favouriteClicked).isEqualTo(events.first())
     }
 
@@ -87,12 +94,15 @@ class EventsLayoutTest {
             TicketMasterTheme {
                 EventItemCard(
                     event = event,
-                    onFavouriteClick = { invoked = true }
+                    onFavouriteClick = { invoked = true },
+                    onEventClick = {},
                 )
             }
         }
 
-        composeTestRule.onNodeWithTag("event_favourite_icon").performClick()
+        composeTestRule
+            .onNodeWithTag("event_favourite_icon")
+            .performClick()
 
         assertThat(invoked).isTrue()
     }
@@ -102,13 +112,14 @@ class EventsLayoutTest {
         val errorMessage = "Something went wrong"
         composeTestRule.setContent {
             TicketMasterTheme {
-                EventsError(error = EventState.Error(errorMessage))
+                EventsError(error = errorMessage)
             }
         }
         composeTestRule
             .onNodeWithTag("error_message")
             .assertTextEquals(errorMessage)
             .assertIsDisplayed()
+
         composeTestRule
             .onNodeWithTag("retry_button")
             .assertIsDisplayed()
@@ -121,7 +132,7 @@ class EventsLayoutTest {
         composeTestRule.setContent {
             TicketMasterTheme {
                 EventsError(
-                    error = EventState.Error(errorMessage),
+                    error = errorMessage,
                     onRetry = { invoked = true }
                 )
             }

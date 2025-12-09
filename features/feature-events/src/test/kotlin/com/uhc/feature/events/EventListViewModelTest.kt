@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.uhc.domain.events.GetEventsUseCase
 import com.uhc.domain.events.model.Event
 import com.uhc.domain.favourites.SetFavouriteEventUseCase
-import com.uhc.feature.events.state.EventState
+import com.uhc.feature.events.state.EventListState
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -31,11 +31,11 @@ class EventListViewModelTest {
     fun `loadEvents emits Success when events are loaded`() = runTest {
         every { getEventsUseCase() } returns flowOf(listOf(eventFavourite, eventNotFavourite))
 
-        subject.eventState.test {
-            assertThat(awaitItem()).isEqualTo(EventState.Loading)
+        subject.eventListState.test {
+            assertThat(awaitItem()).isEqualTo(EventListState.Loading)
             subject.loadEvents()
             assertThat(awaitItem()).isEqualTo(
-                EventState.Success(
+                EventListState.Success(
                     listOf(
                         eventFavourite,
                         eventNotFavourite
@@ -49,10 +49,10 @@ class EventListViewModelTest {
     fun `loadEvents emits Error when events list is empty`() = runTest {
         every { getEventsUseCase() } returns flowOf(emptyList())
 
-        subject.eventState.test {
-            assertThat(awaitItem()).isEqualTo(EventState.Loading)
+        subject.eventListState.test {
+            assertThat(awaitItem()).isEqualTo(EventListState.Loading)
             subject.loadEvents()
-            assertThat(awaitItem()).isEqualTo(EventState.Error("No events found"))
+            assertThat(awaitItem()).isEqualTo(EventListState.Error("No events found"))
         }
     }
 
@@ -60,10 +60,10 @@ class EventListViewModelTest {
     fun `loadEvents emits Error on exception`() = runTest {
         every { getEventsUseCase() } returns flow { throw RuntimeException("Test error") }
 
-        subject.eventState.test {
-            assertThat(awaitItem()).isEqualTo(EventState.Loading)
+        subject.eventListState.test {
+            assertThat(awaitItem()).isEqualTo(EventListState.Loading)
             subject.loadEvents()
-            assertThat(awaitItem()).isEqualTo(EventState.Error("Test error"))
+            assertThat(awaitItem()).isEqualTo(EventListState.Error("Test error"))
         }
     }
 

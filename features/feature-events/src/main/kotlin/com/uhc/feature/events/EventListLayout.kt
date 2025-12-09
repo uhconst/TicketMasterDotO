@@ -1,8 +1,10 @@
 package com.uhc.feature.events
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -28,10 +30,8 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -40,41 +40,50 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
-import com.uhc.feature.events.state.EventState
+import com.uhc.feature.events.state.EventListState
 import com.uhc.lib.compose.utils.R
 import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
+import com.uhc.lib.compose.utils.extensions.sharedElementIfAvailable
+import com.uhc.lib.compose.utils.theme.LocalAnimatedVisibilityScope
+import com.uhc.lib.compose.utils.theme.LocalSharedTransitionScope
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import com.uhc.lib.compose.utils.theme.dimensions
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun EventsLayout() {
+fun EventListLayout(
+    onEventClick: (eventId: String) -> Unit = {},
+) {
     val viewModel: EventListViewModel = koinViewModel()
 
-    val eventState by viewModel.eventState.collectAsState()
+    val eventListState by viewModel.eventListState.collectAsState()
 
-    when (eventState) {
-        is EventState.Success -> {
+    when (eventListState) {
+        is EventListState.Success -> {
             EventsList(
-                eventState = eventState as EventState.Success,
+                eventListState = eventListState as EventListState.Success,
                 onRefresh = { viewModel.loadEvents() },
+                onEventClick = { event -> onEventClick.invoke(event.id) },
                 onFavouriteClick = { event -> viewModel.onClickFavouriteEvent(event) }
             )
         }
 
-        is EventState.Error -> {
-            EventsError(error = eventState as EventState.Error, onRetry = viewModel::loadEvents)
+        is EventListState.Error -> {
+            EventsError(
+                error = (eventListState as EventListState.Error).message,
+                onRetry = viewModel::loadEvents
+            )
         }
 
-        EventState.Loading -> EventsLoading()
+        EventListState.Loading -> EventsLoading()
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EventsList(
-    eventState: EventState.Success,
+    eventListState: EventListState.Success,
     onRefresh: () -> Unit,
+    onEventClick: (Event) -> Unit,
     onFavouriteClick: (Event) -> Unit
 ) {
     val state = rememberPullToRefreshState()
@@ -99,12 +108,13 @@ internal fun EventsList(
             modifier = Modifier.fillMaxSize()
         ) {
             items(
-                items = eventState.events,
+                items = eventListState.events,
                 key = { it.id }
             ) { event ->
                 EventItemCard(
                     modifier = Modifier.animateItem(),
                     event = event,
+                    onEventClick = { onEventClick(event) },
                     onFavouriteClick = { onFavouriteClick(event) }
                 )
             }
@@ -112,14 +122,21 @@ internal fun EventsList(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 internal fun EventItemCard(
     modifier: Modifier = Modifier,
     event: Event,
+    onEventClick: () -> Unit,
     onFavouriteClick: () -> Unit
 ) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
+
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onEventClick() }
     ) {
         Row(
             modifier = Modifier
@@ -134,6 +151,11 @@ internal fun EventItemCard(
                     .weight(0.3f)
                     .aspectRatio(1.8f)
                     .padding(end = MaterialTheme.dimensions.spacing.small)
+                    .sharedElementIfAvailable(
+                        key = "image${event.id}",
+                        shared = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
             )
             Column(
                 modifier = Modifier
@@ -141,21 +163,39 @@ internal fun EventItemCard(
                     .padding(end = MaterialTheme.dimensions.spacing.small)
             ) {
                 Text(
-                    modifier = Modifier.testTag("event_name"),
+                    modifier = Modifier
+                        .sharedElementIfAvailable(
+                            key = "textName${event.id}",
+                            shared = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .testTag("event_name"),
                     text = event.name,
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    modifier = Modifier.testTag("event_venue"),
+                    modifier = Modifier
+                        .sharedElementIfAvailable(
+                            key = "textVenue${event.id}",
+                            shared = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .testTag("event_venue"),
                     text = event.venue,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    modifier = Modifier.testTag("event_dates"),
+                    modifier = Modifier
+                        .sharedElementIfAvailable(
+                            key = "textDates${event.id}",
+                            shared = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                        .testTag("event_dates"),
                     text = event.dates,
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1,
@@ -174,8 +214,7 @@ internal fun EventItemCard(
                     )
                 )
                 Icon(
-                    modifier = Modifier
-                        .scale(scale),
+                    modifier = Modifier.scale(scale),
                     painter = painterResource(
                         id = if (event.favourite) R.drawable.favorite_filled_24px
                         else R.drawable.favorite_24px
@@ -190,7 +229,7 @@ internal fun EventItemCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EventsError(
-    error: EventState.Error,
+    error: String,
     onRetry: () -> Unit = {}
 ) {
     Column(
@@ -209,7 +248,7 @@ internal fun EventsError(
                 .size(MaterialTheme.dimensions.iconSize.xLarge)
         )
         Text(
-            text = error.message,
+            text = error,
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
@@ -263,7 +302,8 @@ private fun EventItemPreview() {
                 venue = "Sample Venue",
                 favourite = false
             ),
-            onFavouriteClick = { }
+            onFavouriteClick = { },
+            onEventClick = { }
         )
     }
 }
@@ -273,7 +313,7 @@ private fun EventItemPreview() {
 private fun EventsLayoutPreview() {
     TicketMasterTheme {
         EventsList(
-            eventState = EventState.Success(
+            eventListState = EventListState.Success(
                 listOf(
                     Event(
                         id = "1",
@@ -302,7 +342,8 @@ private fun EventsLayoutPreview() {
                 )
             ),
             onRefresh = {},
-            onFavouriteClick = {}
+            onFavouriteClick = {},
+            onEventClick = {}
         )
     }
 }
@@ -311,7 +352,7 @@ private fun EventsLayoutPreview() {
 @Composable
 private fun EventsErrorPreview() {
     TicketMasterTheme {
-        EventsError(error = EventState.Error("Failed to load events"))
+        EventsError(error = "Failed to load events")
     }
 }
 

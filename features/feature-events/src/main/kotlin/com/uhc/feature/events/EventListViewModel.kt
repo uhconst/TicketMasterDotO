@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.uhc.domain.events.GetEventsUseCase
 import com.uhc.domain.events.model.Event
 import com.uhc.domain.favourites.SetFavouriteEventUseCase
-import com.uhc.feature.events.state.EventState
+import com.uhc.feature.events.state.EventListState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +18,8 @@ class EventListViewModel(
     private val setFavouriteEventUseCase: SetFavouriteEventUseCase
 ) : ViewModel() {
 
-    private val _eventState = MutableStateFlow<EventState>(EventState.Loading)
-    val eventState: StateFlow<EventState> = _eventState.asStateFlow()
+    private val _eventListState = MutableStateFlow<EventListState>(EventListState.Loading)
+    val eventListState: StateFlow<EventListState> = _eventListState.asStateFlow()
 
     init {
         loadEvents()
@@ -29,16 +29,16 @@ class EventListViewModel(
         viewModelScope.launch {
             getEventsUseCase()
                 .onStart {
-                    _eventState.value = EventState.Loading
+                    _eventListState.value = EventListState.Loading
                 }
                 .catch { e ->
-                    _eventState.value = EventState.Error(e.message ?: "Unknown error")
+                    _eventListState.value = EventListState.Error(e.message ?: "Unknown error")
                 }
                 .collect { events ->
                     if (events.isEmpty()) {
-                        _eventState.value = EventState.Error("No events found")
+                        _eventListState.value = EventListState.Error("No events found")
                     } else {
-                        _eventState.value = EventState.Success(events)
+                        _eventListState.value = EventListState.Success(events)
                     }
                 }
         }
