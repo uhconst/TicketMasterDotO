@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.uhc.feature.about.AboutLayout
 import com.uhc.feature.events.EventDetailsLayout
-import com.uhc.feature.events.EventsLayout
+import com.uhc.feature.events.EventListLayout
 import com.uhc.lib.compose.utils.theme.LocalAnimatedVisibilityScope
 import com.uhc.lib.compose.utils.theme.LocalSharedTransitionScope
 
@@ -32,7 +32,7 @@ fun TicketMasterNavHost(
                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
                     LocalAnimatedVisibilityScope provides this@composable
                 ) {
-                    EventsLayout(
+                    EventListLayout(
                         onEventClick = { eventId ->
                             navController.navigate(NavRoute.EventDetails(eventId))
                         }

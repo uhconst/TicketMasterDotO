@@ -14,7 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
 
-class EventsLayoutTest {
+class EventListLayoutTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

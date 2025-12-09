@@ -51,7 +51,7 @@ import com.uhc.lib.compose.utils.theme.dimensions
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun EventsLayout(
+fun EventListLayout(
     onEventClick: (eventId: String) -> Unit = {},
 ) {
     val viewModel: EventListViewModel = koinViewModel()
