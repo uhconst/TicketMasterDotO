@@ -1,6 +1,13 @@
 package com.uhc.ticketmasterdoto.navigation
 
-sealed class NavRoute(val value: String) {
-    data object Home: NavRoute("home")
-    data object About: NavRoute("about")
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class NavRoute {
+    @Serializable
+    data object Home: NavRoute()
+    @Serializable
+    data object About: NavRoute()
+    @Serializable
+    data class EventDetails(val eventId: String): NavRoute()
 }

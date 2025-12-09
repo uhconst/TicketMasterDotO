@@ -13,12 +13,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.uhc.lib.compose.utils.R
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import com.uhc.ticketmasterdoto.navigation.NavRoute
 import com.uhc.ticketmasterdoto.navigation.TicketMasterNavHost
+import kotlin.reflect.KClass
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,16 +30,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+            val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
             TicketMasterTheme {
                 Scaffold(
                     bottomBar = {
                         NavigationBar {
                             NavigationBarItem(
-                                selected = currentRoute == NavRoute.Home.value,
-                                onClick = { navController.navigate(NavRoute.Home.value) },
+                                selected = currentBackStackEntry?.destination.isRouteInHierarchy(
+                                    NavRoute.Home::class
+                                ),
+                                onClick = { navController.navigate(NavRoute.Home) },
                                 label = { Text(stringResource(R.string.home_bottom_nav)) },
                                 icon = {
                                     Icon(
@@ -45,8 +50,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                             NavigationBarItem(
-                                selected = currentRoute == NavRoute.About.value,
-                                onClick = { navController.navigate(NavRoute.About.value) },
+                                selected = currentBackStackEntry?.destination.isRouteInHierarchy(
+                                    NavRoute.About::class
+                                ),
+                                onClick = { navController.navigate(NavRoute.About) },
                                 label = { Text(stringResource(R.string.about_bottom_nav)) },
                                 icon = {
                                     Icon(
@@ -64,3 +71,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
+    this?.hierarchy?.any {
+        it.hasRoute(route)
+    } ?: false

@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.koin.androidx.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.coil)
