@@ -11,18 +11,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import coil.compose.AsyncImage
 import com.uhc.domain.events.model.Event
 import com.uhc.feature.events.state.EventDetailsState
+import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
 import com.uhc.lib.compose.utils.extensions.sharedElementIfAvailable
 import com.uhc.lib.compose.utils.theme.LocalAnimatedVisibilityScope
 import com.uhc.lib.compose.utils.theme.LocalSharedTransitionScope
+import com.uhc.lib.compose.utils.theme.TicketMasterTheme
 import com.uhc.lib.compose.utils.theme.dimensions
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-//todo preview
-//todo UI test
 @Composable
 fun EventDetailsLayout(
     eventId: String
@@ -38,11 +39,14 @@ fun EventDetailsLayout(
         }
 
         is EventDetailsState.Error -> {
-            // todo
+            EventsError(
+                error = (eventDetailsState as EventDetailsState.Error).message,
+                onRetry = viewModel::loadEvents
+            )
         }
 
         EventDetailsState.Loading -> {
-            // todo
+            EventsLoading()
         }
     }
 }
@@ -76,7 +80,8 @@ internal fun EventDetails(
                     key = "textName${event.id}",
                     shared = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope
-                ),
+                )
+                .testTag("event_name"),
             text = event.name,
             style = MaterialTheme.typography.titleLarge
         )
@@ -88,7 +93,8 @@ internal fun EventDetails(
                     key = "textVenue${event.id}",
                     shared = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope
-                ),
+                )
+                .testTag("event_venue"),
             text = event.venue,
             style = MaterialTheme.typography.bodyMedium
         )
@@ -100,9 +106,27 @@ internal fun EventDetails(
                     key = "textDates${event.id}",
                     shared = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope
-                ),
+                )
+                .testTag("event_dates"),
             text = event.dates,
             style = MaterialTheme.typography.bodySmall
+        )
+    }
+}
+
+@TicketMasterPreview
+@Composable
+private fun EventItemPreview() {
+    TicketMasterTheme {
+        EventDetails(
+            event = Event(
+                id = "1",
+                name = "Sample Event",
+                imageUrl = "",
+                dates = "2023-10-01 to 2023-10-05",
+                venue = "Sample Venue",
+                favourite = false
+            )
         )
     }
 }

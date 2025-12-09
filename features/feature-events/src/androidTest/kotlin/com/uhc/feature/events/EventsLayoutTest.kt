@@ -112,7 +112,7 @@ class EventsLayoutTest {
         val errorMessage = "Something went wrong"
         composeTestRule.setContent {
             TicketMasterTheme {
-                EventsError(error = EventListState.Error(errorMessage))
+                EventsError(error = errorMessage)
             }
         }
         composeTestRule
@@ -132,7 +132,7 @@ class EventsLayoutTest {
         composeTestRule.setContent {
             TicketMasterTheme {
                 EventsError(
-                    error = EventListState.Error(errorMessage),
+                    error = errorMessage,
                     onRetry = { invoked = true }
                 )
             }

@@ -70,7 +70,7 @@ fun EventsLayout(
 
         is EventListState.Error -> {
             EventsError(
-                error = eventListState as EventListState.Error,
+                error = (eventListState as EventListState.Error).message,
                 onRetry = viewModel::loadEvents
             )
         }
@@ -229,7 +229,7 @@ internal fun EventItemCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EventsError(
-    error: EventListState.Error,
+    error: String,
     onRetry: () -> Unit = {}
 ) {
     Column(
@@ -248,7 +248,7 @@ internal fun EventsError(
                 .size(MaterialTheme.dimensions.iconSize.xLarge)
         )
         Text(
-            text = error.message,
+            text = error,
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
@@ -352,7 +352,7 @@ private fun EventsLayoutPreview() {
 @Composable
 private fun EventsErrorPreview() {
     TicketMasterTheme {
-        EventsError(error = EventListState.Error("Failed to load events"))
+        EventsError(error = "Failed to load events")
     }
 }
 
