@@ -18,9 +18,8 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.uhc.lib.compose.utils.R
 import com.uhc.lib.compose.utils.theme.TicketMasterTheme
-import com.uhc.ticketmasterdoto.navigation.NavRoute
+import com.uhc.ticketmasterdoto.navigation.TOP_LEVEL_ROUTES
 import com.uhc.ticketmasterdoto.navigation.TicketMasterNavHost
 import kotlin.reflect.KClass
 
@@ -36,32 +35,21 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     bottomBar = {
                         NavigationBar {
-                            NavigationBarItem(
-                                selected = currentBackStackEntry?.destination.isRouteInHierarchy(
-                                    NavRoute.Home::class
-                                ),
-                                onClick = { navController.navigate(NavRoute.Home) },
-                                label = { Text(stringResource(R.string.home_bottom_nav)) },
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.home_24px),
-                                        contentDescription = stringResource(R.string.home_bottom_nav)
-                                    )
-                                }
-                            )
-                            NavigationBarItem(
-                                selected = currentBackStackEntry?.destination.isRouteInHierarchy(
-                                    NavRoute.About::class
-                                ),
-                                onClick = { navController.navigate(NavRoute.About) },
-                                label = { Text(stringResource(R.string.about_bottom_nav)) },
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.account_box_24px),
-                                        contentDescription = stringResource(R.string.about_bottom_nav)
-                                    )
-                                }
-                            )
+                            TOP_LEVEL_ROUTES.forEach { (key, value) ->
+                                NavigationBarItem(
+                                    selected = currentBackStackEntry?.destination.isRouteInHierarchy(
+                                        key::class
+                                    ),
+                                    onClick = { navController.navigate(key) },
+                                    label = { Text(stringResource(value.description)) },
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(id = value.icon),
+                                            contentDescription = stringResource(value.description)
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->
