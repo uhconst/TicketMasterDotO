@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.uhc.repo.favourites.data.FavouriteEventEntity
 
-@Database(entities = [FavouriteEventEntity::class], version = 1)
+@Database(entities = [FavouriteEventEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
