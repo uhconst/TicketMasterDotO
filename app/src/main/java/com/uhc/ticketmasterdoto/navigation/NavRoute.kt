@@ -21,7 +21,7 @@ internal val TOP_LEVEL_ROUTES = mapOf<NavRoute, NavBarItem>(
         description = R.string.home_bottom_nav
     ),
     NavRoute.Chatbot to NavBarItem(
-        icon = R.drawable.account_box_24px,
+        icon = R.drawable.favorite_24px,
         description = R.string.chatbot_bottom_nav
     ),
     NavRoute.About to NavBarItem(
