@@ -8,6 +8,8 @@ sealed class NavRoute {
     @Serializable
     data object Home: NavRoute()
     @Serializable
+    data object Chatbot: NavRoute()
+    @Serializable
     data object About: NavRoute()
     @Serializable
     data class EventDetails(val eventId: String): NavRoute()
@@ -18,8 +20,12 @@ internal val TOP_LEVEL_ROUTES = mapOf<NavRoute, NavBarItem>(
         icon = R.drawable.home_24px,
         description = R.string.home_bottom_nav
     ),
+    NavRoute.Chatbot to NavBarItem(
+        icon = R.drawable.account_box_24px,
+        description = R.string.chatbot_bottom_nav
+    ),
     NavRoute.About to NavBarItem(
         icon = R.drawable.account_box_24px,
         description = R.string.about_bottom_nav
-    ),
+    )
 )
