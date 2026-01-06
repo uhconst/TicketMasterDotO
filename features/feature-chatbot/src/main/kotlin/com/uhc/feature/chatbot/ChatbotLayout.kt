@@ -42,7 +42,9 @@ fun ChatbotLayout() {
     var text by remember { mutableStateOf(TextFieldValue("")) }
     val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.fillMaxSize().padding(MaterialTheme.dimensions.spacing.medium)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(MaterialTheme.dimensions.spacing.medium)) {
         Text(
             "💬 Chat with UryBot",
             style = MaterialTheme.typography.titleLarge,
@@ -71,11 +73,15 @@ fun ChatbotLayout() {
                 key = { it.hashCode() }
             ) { msg ->
                 val isUser = msg is MessageState.User
-                val bgColor = if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-                val textColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                val bgColor =
+                    if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                val textColor =
+                    if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = MaterialTheme.dimensions.spacing.xSmall),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = MaterialTheme.dimensions.spacing.xSmall),
                     contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
                 ) {
                     Surface(
@@ -91,7 +97,7 @@ fun ChatbotLayout() {
                 }
             }
         }
-        
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = text,
