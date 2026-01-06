@@ -29,8 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
 import com.uhc.feature.chatbot.state.MessageState
+import com.uhc.lib.compose.utils.theme.dimensions
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -42,11 +42,11 @@ fun ChatbotLayout() {
     var text by remember { mutableStateOf(TextFieldValue("")) }
     val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(MaterialTheme.dimensions.spacing.medium)) {
         Text(
             "💬 Chat with UryBot",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = MaterialTheme.dimensions.spacing.small)
         )
 
         val listState = rememberLazyListState()
@@ -62,9 +62,9 @@ fun ChatbotLayout() {
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .padding(bottom = MaterialTheme.dimensions.spacing.small),
             verticalArrangement = Arrangement.Top,
-            contentPadding = PaddingValues(vertical = 8.dp)
+            contentPadding = PaddingValues(vertical = MaterialTheme.dimensions.spacing.small)
         ) {
             items(
                 items = messagesState,
@@ -75,7 +75,7 @@ fun ChatbotLayout() {
                 val textColor = if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = MaterialTheme.dimensions.spacing.xSmall),
                     contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
                 ) {
                     Surface(
@@ -85,14 +85,13 @@ fun ChatbotLayout() {
                         Text(
                             text = msg.text,
                             color = textColor,
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier.padding(MaterialTheme.dimensions.spacing.small + MaterialTheme.dimensions.spacing.xSmall)
                         )
                     }
                 }
             }
         }
-
-        // Input bar
+        
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = text,
@@ -100,7 +99,7 @@ fun ChatbotLayout() {
                 modifier = Modifier.weight(1f),
                 placeholder = { Text("Ask something about Ury...") }
             )
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(MaterialTheme.dimensions.spacing.small))
             Button(
                 onClick = {
                     val content = text.text.trim()
