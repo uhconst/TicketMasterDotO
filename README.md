@@ -1,12 +1,18 @@
 # MVVM-KOTLIN
-Android application using MVVM to display a list of events from Ticketmaster.
+This Android app shows a list of events by fetching them from an API and storing them in a local database. 
+It also includes a Chatbot and an About screen. Since this is a showcase app using clean architecture and modern frameworks, I added these extra screens so you can learn more about me and my work.
+
 Tapping add to favourite will move the event to the top of the list in a separate
 “Favourites” section and also to the “Favourites Events” screen.
 
 ## Architecture
-- Modularised: data, domain, and feature modules
-- MVVM architecture pattern
-- Jetpack Compose for UI
+- **Modularised Structure**: The project is organised into several module types to ensure a clean separation of concerns and improved maintainability.
+  - **Feature Modules**: contain UI logic and specific screen implementations (e.g., `feature-events`, `feature-chatbot`).
+  - **Domain Modules**: handle business logic and use cases, acting as a bridge between data and UI (e.g., `domain-events`).
+  - **Data Modules**: responsible for data retrieval and persistence, including API calls and database management (e.g., `api-events`, `repo-favourites`).
+  - **Library Modules**: standalone modules (found in the `libraries/` directory) designed as pure Kotlin/Android utilities. These modules are strictly isolated: they do not depend on any other project modules and do not depend on each other. This ensures they provide reusable, independent functionality (e.g., `lib-network-utils`, `lib-compose-utils`).
+- **MVVM Pattern**: Follows the Model-View-ViewModel architecture to separate UI from business logic.
+- **Jetpack Compose**: Modern toolkit for building native UI using a declarative approach.
 
 ## Libraries used in this project
 - [Gson](https://github.com/google/gson)
@@ -16,23 +22,33 @@ Tapping add to favourite will move the event to the top of the list in a separat
 - [Coil](https://coil-kt.github.io/coil/compose/)
 - [Retrofit](https://square.github.io/retrofit/)
 - [Room](https://developer.android.com/topic/libraries/architecture/room.html)
+- [Data Store](https://developer.android.com/topic/libraries/architecture/datastore)
 - [Coroutines](https://developer.android.com/kotlin/coroutines)
 - [Robolectric](https://github.com/robolectric/robolectric)
 - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel.html)
 
 ## Events Screen
-- Name
-- Image
-- Venue name
-- Dates
-- Add to favourite action
+- Displays a list of upcoming events from the Ticketmaster API.
+- Each item shows: Event Name, Image, Venue Name, and Event Dates.
+- **Interactive Features**:
+  - Add to Favourites directly from the list.
+  - Swipe-to-refresh to fetch the latest event updates.
+  - Smooth navigation to the details screen using shared element transitions.
 
-## Favourites Events Screen
-- Displays developer name, role, and a short bio.
-- Shows a card with a brief description of the app.
-- Provides buttons linking to the developer’s GitHub and LinkedIn profiles.
-- Fully scrollable layout for smaller screens.
-- Theming support via MaterialTheme and custom theme.
+## Events Details Screen
+- Detailed view of a selected event including its name, image, venue, and dates.
+- Utilises Shared Element Transitions for a smooth visual experience when navigating from the list.
+
+## Chatbot Screen
+- Interactive chat with "UryBot", powered by Gemini AI.
+- Users can provide their own Gemini API Key via a settings dialog.
+- API Key is stored using Jetpack DataStore.
+- Features an auto-scrolling message list for a seamless conversation.
+
+## About Screen
+- Information about the developer, including name, role, and bio.
+- Links to GitHub and LinkedIn profiles.
+- Description of the Ticketmaster DotO application.
 
 ## Tests
 - Layout
@@ -50,9 +66,6 @@ Tapping add to favourite will move the event to the top of the list in a separat
 - Handling screen rotation
 - Swipe to refresh
 - Project hosted on [GitHub](https://github.com/uhconst/Ticket_Master.git)
-
-## Important to notice
-- In the <b>Favourites Screen</b> the app requests the API for each event using the event id. For some reason the API is returning sometimes *429 Too Many Requests*. To test that screen would be better having no more than 3 favourite events to avoid multiple calls and the API problem
 
 ## Developed by
 Uryel Constancio - [uryelhenrique.c@gmail.com](uryelhenrique.c@gmail.com)
