@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import com.uhc.feature.chatbot.state.ChatbotUiState
@@ -55,7 +56,7 @@ fun ChatbotLayout() {
 }
 
 @Composable
-private fun ChatbotScreen(
+internal fun ChatbotScreen(
     uiState: ChatbotUiState,
     onSettingsClicked: () -> Unit,
     onDismissDialog: () -> Unit,
@@ -100,7 +101,7 @@ private fun ChatbotScreen(
 }
 
 @Composable
-private fun ChatbotHeader(onSettingsClicked: () -> Unit) {
+internal fun ChatbotHeader(onSettingsClicked: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -112,7 +113,10 @@ private fun ChatbotHeader(onSettingsClicked: () -> Unit) {
             "💬 Chat with UryBot",
             style = MaterialTheme.typography.titleLarge
         )
-        IconButton(onClick = onSettingsClicked) {
+        IconButton(
+            onClick = onSettingsClicked,
+            modifier = Modifier.testTag("settings_button")
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.settings_24px),
                 contentDescription = "Settings"
@@ -122,7 +126,7 @@ private fun ChatbotHeader(onSettingsClicked: () -> Unit) {
 }
 
 @Composable
-private fun ChatbotApiKeyDialog(
+internal fun ChatbotApiKeyDialog(
     currentApiKey: String,
     onDismissRequest: () -> Unit,
     onConfirm: (String) -> Unit
@@ -135,6 +139,7 @@ private fun ChatbotApiKeyDialog(
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
+        modifier = Modifier.testTag("api_key_dialog"),
         title = { Text("Enter Gemini API Key") },
         text = {
             Column {
@@ -144,20 +149,26 @@ private fun ChatbotApiKeyDialog(
                     value = apiKeyInput,
                     onValueChange = { apiKeyInput = it },
                     label = { Text("API Key") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("api_key_input"),
                     maxLines = 2
                 )
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(apiKeyInput) }
+                onClick = { onConfirm(apiKeyInput) },
+                modifier = Modifier.testTag("api_key_submit")
             ) {
                 Text("Submit")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismissRequest) {
+            TextButton(
+                onClick = onDismissRequest,
+                modifier = Modifier.testTag("api_key_cancel")
+            ) {
                 Text("Cancel")
             }
         }
@@ -165,7 +176,7 @@ private fun ChatbotApiKeyDialog(
 }
 
 @Composable
-private fun MessageList(
+internal fun MessageList(
     messages: List<MessageState>,
     modifier: Modifier = Modifier,
     listState: androidx.compose.foundation.lazy.LazyListState = rememberLazyListState()
@@ -174,6 +185,7 @@ private fun MessageList(
         state = listState,
         modifier = modifier
             .fillMaxWidth()
+            .testTag("message_list")
             .padding(bottom = MaterialTheme.dimensions.spacing.small),
         verticalArrangement = Arrangement.Top,
         contentPadding = PaddingValues(vertical = MaterialTheme.dimensions.spacing.small)
@@ -188,7 +200,7 @@ private fun MessageList(
 }
 
 @Composable
-private fun MessageItem(msg: MessageState) {
+internal fun MessageItem(msg: MessageState) {
     val isUser = msg is MessageState.User
     val bgColor =
         if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
@@ -203,7 +215,8 @@ private fun MessageItem(msg: MessageState) {
     ) {
         Surface(
             color = bgColor,
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.testTag(if (isUser) "user_message" else "bot_message")
         ) {
             Text(
                 text = msg.text,
@@ -215,7 +228,7 @@ private fun MessageItem(msg: MessageState) {
 }
 
 @Composable
-private fun MessageInput(
+internal fun MessageInput(
     hasApiKey: Boolean,
     onSendMessage: (String) -> Unit,
     onSettingsClicked: () -> Unit
@@ -223,11 +236,16 @@ private fun MessageInput(
     var text by remember { mutableStateOf(TextFieldValue("")) }
 
     if (hasApiKey) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.testTag("message_input_area")
+        ) {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("message_input_field"),
                 placeholder = { Text("Ask something about Ury...") }
             )
             Spacer(Modifier.width(MaterialTheme.dimensions.spacing.small))
@@ -238,7 +256,8 @@ private fun MessageInput(
                         onSendMessage(content)
                         text = TextFieldValue("")
                     }
-                }
+                },
+                modifier = Modifier.testTag("send_button")
             ) {
                 Text("Send")
             }
@@ -246,7 +265,9 @@ private fun MessageInput(
     } else {
         Button(
             onClick = onSettingsClicked,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("enter_api_key_button")
         ) {
             Text("Enter API Key")
         }
