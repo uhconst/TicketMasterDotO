@@ -2,9 +2,7 @@ package com.uhc.api.chatbot
 
 import android.content.Context
 
-// todo move key to backend
 data class ChatbotConfig(
-    val apiKey: String = "AIzaSyClA5Rbco9zqU9VsYNLYpve12Ph2z-LGCY",
     val modelName: String = "gemini-2.5-flash-lite",
     val systemPrompt: String
 )

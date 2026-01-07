@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation(libs.generativeai)
     implementation(libs.koin.android)
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
