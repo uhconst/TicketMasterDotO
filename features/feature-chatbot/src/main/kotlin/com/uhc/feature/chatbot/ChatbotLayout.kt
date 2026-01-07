@@ -28,63 +28,45 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import com.uhc.feature.chatbot.state.ChatbotUiState
 import com.uhc.feature.chatbot.state.MessageState
 import com.uhc.lib.compose.utils.R
+import com.uhc.lib.compose.utils.annotations.TicketMasterPreview
 import com.uhc.lib.compose.utils.theme.dimensions
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ChatbotLayout() {
     val viewModel: ChatbotViewModel = koinViewModel()
-
     val uiState by viewModel.uiState.collectAsState()
-    var text by remember { mutableStateOf(TextFieldValue("")) }
-    val scope = rememberCoroutineScope()
 
-    var apiKeyInput by remember { mutableStateOf("") }
+    ChatbotScreen(
+        uiState = uiState,
+        onSettingsClicked = { viewModel.onSettingsClicked() },
+        onDismissDialog = { viewModel.onDismissDialog() },
+        onSaveApiKey = { viewModel.saveApiKey(it) },
+        onSendMessage = { viewModel.sendMessage(it) }
+    )
+}
 
-    LaunchedEffect(uiState.showDialog) {
-        if (uiState.showDialog) {
-            apiKeyInput = uiState.apiKey ?: ""
-        }
-    }
-
+@Composable
+private fun ChatbotScreen(
+    uiState: ChatbotUiState,
+    onSettingsClicked: () -> Unit,
+    onDismissDialog: () -> Unit,
+    onSaveApiKey: (String) -> Unit,
+    onSendMessage: (String) -> Unit
+) {
     if (uiState.showDialog) {
-        AlertDialog(
-            onDismissRequest = { viewModel.onDismissDialog() },
-            title = { Text("Enter Gemini API Key") },
-            text = {
-                Column {
-                    Text("To use the chatbot, please provide a Gemini API Key.")
-                    Spacer(modifier = Modifier.padding(MaterialTheme.dimensions.spacing.small))
-                    OutlinedTextField(
-                        value = apiKeyInput,
-                        onValueChange = { apiKeyInput = it },
-                        label = { Text("API Key") },
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 2
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.saveApiKey(apiKeyInput) }
-                ) {
-                    Text("Submit")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.onDismissDialog() }) {
-                    Text("Cancel")
-                }
-            }
+        ChatbotApiKeyDialog(
+            currentApiKey = uiState.apiKey ?: "",
+            onDismissRequest = onDismissDialog,
+            onConfirm = onSaveApiKey
         )
     }
 
@@ -93,24 +75,7 @@ fun ChatbotLayout() {
             .fillMaxSize()
             .padding(MaterialTheme.dimensions.spacing.medium)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = MaterialTheme.dimensions.spacing.small),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                "💬 Chat with UryBot",
-                style = MaterialTheme.typography.titleLarge
-            )
-            IconButton(onClick = { viewModel.onSettingsClicked() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.settings_24px),
-                    contentDescription = "Settings"
-                )
-            }
-        }
+        ChatbotHeader(onSettingsClicked = onSettingsClicked)
 
         val listState = rememberLazyListState()
 
@@ -120,75 +85,213 @@ fun ChatbotLayout() {
             }
         }
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(bottom = MaterialTheme.dimensions.spacing.small),
-            verticalArrangement = Arrangement.Top,
-            contentPadding = PaddingValues(vertical = MaterialTheme.dimensions.spacing.small)
-        ) {
-            items(
-                items = uiState.messages,
-                key = { it.hashCode() }
-            ) { msg ->
-                val isUser = msg is MessageState.User
-                val bgColor =
-                    if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-                val textColor =
-                    if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+        MessageList(
+            messages = uiState.messages,
+            modifier = Modifier.weight(1f),
+            listState = listState
+        )
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = MaterialTheme.dimensions.spacing.xSmall),
-                    contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
-                ) {
-                    Surface(
-                        color = bgColor,
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Text(
-                            text = msg.text,
-                            color = textColor,
-                            modifier = Modifier.padding(MaterialTheme.dimensions.spacing.small + MaterialTheme.dimensions.spacing.xSmall)
-                        )
-                    }
-                }
-            }
-        }
+        MessageInput(
+            hasApiKey = uiState.hasApiKey,
+            onSendMessage = onSendMessage,
+            onSettingsClicked = onSettingsClicked
+        )
+    }
+}
 
-        if (uiState.hasApiKey) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier.weight(1f),
-                    placeholder = { Text("Ask something about Ury...") }
-                )
-                Spacer(Modifier.width(MaterialTheme.dimensions.spacing.small))
-                Button(
-                    onClick = {
-                        val content = text.text.trim()
-                        if (content.isNotEmpty()) {
-                            scope.launch {
-                                viewModel.sendMessage(content)
-                                text = TextFieldValue("")
-                            }
-                        }
-                    }
-                ) {
-                    Text("Send")
-                }
-            }
-        } else {
-            Button(
-                onClick = { viewModel.onSettingsClicked() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Enter API Key")
-            }
+@Composable
+private fun ChatbotHeader(onSettingsClicked: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = MaterialTheme.dimensions.spacing.small),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            "💬 Chat with UryBot",
+            style = MaterialTheme.typography.titleLarge
+        )
+        IconButton(onClick = onSettingsClicked) {
+            Icon(
+                painter = painterResource(id = R.drawable.settings_24px),
+                contentDescription = "Settings"
+            )
         }
     }
+}
+
+@Composable
+private fun ChatbotApiKeyDialog(
+    currentApiKey: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var apiKeyInput by remember { mutableStateOf("") }
+
+    LaunchedEffect(currentApiKey) {
+        apiKeyInput = currentApiKey
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = { Text("Enter Gemini API Key") },
+        text = {
+            Column {
+                Text("To use the chatbot, please provide a Gemini API Key.")
+                Spacer(modifier = Modifier.padding(MaterialTheme.dimensions.spacing.small))
+                OutlinedTextField(
+                    value = apiKeyInput,
+                    onValueChange = { apiKeyInput = it },
+                    label = { Text("API Key") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 2
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(apiKeyInput) }
+            ) {
+                Text("Submit")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+private fun MessageList(
+    messages: List<MessageState>,
+    modifier: Modifier = Modifier,
+    listState: androidx.compose.foundation.lazy.LazyListState = rememberLazyListState()
+) {
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = MaterialTheme.dimensions.spacing.small),
+        verticalArrangement = Arrangement.Top,
+        contentPadding = PaddingValues(vertical = MaterialTheme.dimensions.spacing.small)
+    ) {
+        items(
+            items = messages,
+            key = { it.hashCode() }
+        ) { msg ->
+            MessageItem(msg)
+        }
+    }
+}
+
+@Composable
+private fun MessageItem(msg: MessageState) {
+    val isUser = msg is MessageState.User
+    val bgColor =
+        if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+    val textColor =
+        if (isUser) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = MaterialTheme.dimensions.spacing.xSmall),
+        contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
+    ) {
+        Surface(
+            color = bgColor,
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(
+                text = msg.text,
+                color = textColor,
+                modifier = Modifier.padding(MaterialTheme.dimensions.spacing.small + MaterialTheme.dimensions.spacing.xSmall)
+            )
+        }
+    }
+}
+
+@Composable
+private fun MessageInput(
+    hasApiKey: Boolean,
+    onSendMessage: (String) -> Unit,
+    onSettingsClicked: () -> Unit
+) {
+    var text by remember { mutableStateOf(TextFieldValue("")) }
+
+    if (hasApiKey) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Ask something about Ury...") }
+            )
+            Spacer(Modifier.width(MaterialTheme.dimensions.spacing.small))
+            Button(
+                onClick = {
+                    val content = text.text.trim()
+                    if (content.isNotEmpty()) {
+                        onSendMessage(content)
+                        text = TextFieldValue("")
+                    }
+                }
+            ) {
+                Text("Send")
+            }
+        }
+    } else {
+        Button(
+            onClick = onSettingsClicked,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Enter API Key")
+        }
+    }
+}
+
+@TicketMasterPreview
+@Composable
+private fun ChatbotScreenPreview() {
+    ChatbotScreen(
+        uiState = ChatbotUiState(
+            messages = listOf(
+                MessageState.User("Hello!"),
+                MessageState.Bot("Hi there! How can I help you today?")
+            ),
+            apiKey = "fake-api-key"
+        ),
+        onSettingsClicked = {},
+        onDismissDialog = {},
+        onSaveApiKey = {},
+        onSendMessage = {}
+    )
+}
+
+@TicketMasterPreview
+@Composable
+private fun ChatbotScreenNoApiKeyPreview() {
+    ChatbotScreen(
+        uiState = ChatbotUiState(
+            messages = emptyList(),
+            apiKey = null
+        ),
+        onSettingsClicked = {},
+        onDismissDialog = {},
+        onSaveApiKey = {},
+        onSendMessage = {}
+    )
+}
+
+@TicketMasterPreview
+@Composable
+private fun ChatbotApiKeyDialogPreview() {
+    ChatbotApiKeyDialog(
+        currentApiKey = "existing-api-key",
+        onDismissRequest = {},
+        onConfirm = {}
+    )
 }
